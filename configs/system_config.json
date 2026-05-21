@@ -1,0 +1,33 @@
+{
+  "positioning": "蓝海微需求数字商品店（避开红海词）",
+  "bio_rules": ["不做收益承诺", "只做效率和模板交付", "支持自动发货"],
+  "visual_rules": ["封面统一色系", "首屏给结果", "场景词前置"],
+  "seed_categories": ["机器人求职", "细分跨境上架素材", "银发数字化操作卡"],
+  "price_range": [9.9, 59],
+  "top_k": 3,
+  "pricing_policy": {"entry": 9.9, "main": 19.9, "upsell": 39},
+  "listing_template": "问题-结果-可复制步骤-售后说明",
+  "campaign_fit_threshold": 0.75,
+  "keyword_policy": {"include": ["可复制", "模板", "清单"], "exclude": ["稳赚", "包过", "内部渠道"]},
+  "crm_rules": {
+    "first_reply_seconds": 30,
+    "follow_up_hours": [6, 24],
+    "max_marketing_per_7d": 3
+  },
+  "feedback_rules": {
+    "send_after_delivery_hours": 12,
+    "collect_nps": true,
+    "trigger_rewrite_if_negative": true
+  },
+  "platforms": [
+    {"platform": "xiaohongshu", "username": "${XHS_USER}"},
+    {"platform": "douyin", "username": "${DY_USER}"},
+    {"platform": "xianyu", "username": "${XY_USER}"},
+    {"platform": "pinduoduo", "username": "${PDD_USER}"}
+  ],
+  "fallback_signals": [
+    {"name": "机器人面试问答包", "demand": 0.85, "competition": 0.35, "margin": 0.8, "freshness": 0.9},
+    {"name": "TEMU跨境上架句式包", "demand": 0.8, "competition": 0.4, "margin": 0.75, "freshness": 0.85},
+    {"name": "银发支付防骗图卡", "demand": 0.78, "competition": 0.33, "margin": 0.7, "freshness": 0.88}
+  ]
+}
