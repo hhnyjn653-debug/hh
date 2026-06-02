@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw"
+  short_description: "Federate and coordinate cross-system compute safely."
+  default_prompt: "Use OpenClaw to design or operate a privacy-preserving cross-system compute federation with coordinated task execution."
