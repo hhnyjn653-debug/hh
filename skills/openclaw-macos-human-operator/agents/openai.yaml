@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenClaw macOS Human Operator"
+  short_description: "Human-like macOS desktop app control"
+  default_prompt: "Use $openclaw-macos-human-operator to operate a macOS desktop app like a careful human."
