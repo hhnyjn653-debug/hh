@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#ff7aa8" />
+    <meta name="description" content="Aini 本地 AI 虚拟陪伴 App" />
     <title>Aini</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -13,13 +14,13 @@
         <header class="top-bar">
           <div>
             <p class="eyebrow">Aini · 本地陪伴</p>
-            <h1>你好，我是 Aini</h1>
+            <h1><span class="brand-mark-mini">Ai</span> 你好，我是 Aini</h1>
           </div>
           <button id="settingsButton" class="icon-button" aria-label="打开设置">⚙️</button>
         </header>
 
         <section class="hero-card" aria-label="当前陪伴状态">
-          <div class="avatar" aria-hidden="true">愛</div>
+          <div class="avatar" aria-hidden="true"><span class="logo-heart">Ai</span><span class="logo-spark">♥</span></div>
           <div class="hero-copy">
             <p id="sceneLabel">在手机本地运行 · 未连接蓝牙</p>
             <h2 id="aiMoodTitle">温柔在线，轻声陪你</h2>
@@ -60,6 +61,7 @@
             <div class="meter"><span>关心</span><progress id="concernMeter" max="100" value="76"></progress></div>
             <div class="meter"><span>活力</span><progress id="energyMeter" max="100" value="58"></progress></div>
             <div class="meter"><span>亲密</span><progress id="closenessMeter" max="100" value="64"></progress></div>
+            <div class="meter"><span>傲娇</span><progress id="prideMeter" max="100" value="42"></progress></div>
           </article>
           <article class="panel">
             <h3>本地记忆</h3>
@@ -100,6 +102,27 @@
             支持平台
             <input value="Android / iOS / HarmonyOS" readonly />
           </label>
+          <label>
+            TTS 音色
+            <select id="voiceSelect">
+              <option value="female_taiwan_warm_01">女声 · 台湾口音温暖</option>
+              <option value="male_calm_01">男声 · 温柔沉稳</option>
+            </select>
+          </label>
+          <label>
+            语音情绪
+            <select id="emotionSelect">
+              <option value="warm_playful">温柔活泼</option>
+              <option value="concerned_soft">心疼轻声</option>
+              <option value="proud_teasing">小傲娇毒舌</option>
+              <option value="calm_late">夜间低声</option>
+            </select>
+          </label>
+          <div class="voice-tools" aria-label="语音试听与打断">
+            <button type="button" id="voicePreviewButton" class="secondary-button">试听情绪语音</button>
+            <button type="button" id="stopVoiceButton" class="secondary-button">打断语音</button>
+          </div>
+          <p id="voiceStatus" class="voice-status">女声 · 台湾口音温暖 · 温柔活泼</p>
           <label>
             主动关怀强度
             <input id="careRange" type="range" min="0" max="100" value="55" />

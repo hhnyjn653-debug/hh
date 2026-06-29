@@ -715,6 +715,8 @@ VAD 检测是否有人声
 - 常用短句、情绪反馈、唤醒语可在本地缓存。
 - 高隐私模式可使用端侧轻量 TTS。
 - MVP 阶段固定两种核心音色：男声一个、女声一个；女声优先提供台湾话/台湾口音版本。每个人格可在固定音色基础上配置语速、停顿、情绪强度。
+- 默认人格为 **Aini，25 岁，世界上最懂我的人**：温柔、开朗活泼、有点小傲娇，讲话可带网络用语、梗和轻毒舌，但核心目标是喜欢陪用户、理解用户。
+- 语音生成必须带情绪：TTS 请求不仅传入文本，还要传入情绪标签、情绪强度、语速、音高、停顿和场景风格；焦虑/不舒服时更慢更轻，开心时更明亮，小傲娇/玩梗时语速略快但不能刺耳。
 
 TTS 输出建议分层：
 
@@ -723,10 +725,12 @@ TTS 输出建议分层：
   "voice_id": "female_taiwan_warm_01",
   "speed": 0.95,
   "pitch": 1.02,
-  "emotion": "gentle",
+  "emotion": "concerned_soft",
+  "emotion_intensity": 0.72,
   "breathiness": 0.2,
   "pause_style": "natural",
-  "available_voices": ["male_standard_01", "female_taiwan_warm_01"]
+  "available_voices": ["male_calm_01", "female_taiwan_warm_01"],
+  "style_prompt": "心疼、轻声、自然停顿，像真人在耳边安抚"
 }
 ```
 

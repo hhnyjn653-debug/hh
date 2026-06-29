@@ -55,7 +55,8 @@ button { cursor: pointer; border: 0; }
 }
 .eyebrow { margin: 0 0 4px; color: var(--brand-strong); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; }
 h1, h2, h3, p { margin-top: 0; }
-h1 { margin-bottom: 0; font-size: 28px; letter-spacing: -0.04em; }
+h1 { margin-bottom: 0; font-size: 28px; letter-spacing: -0.04em; display: flex; align-items: center; gap: 8px; }
+.brand-mark-mini { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 13px; color: #fff; font-size: 14px; background: linear-gradient(135deg, var(--brand), var(--lavender)); box-shadow: 0 10px 20px rgba(255,111,159,.25); }
 .icon-button {
   width: 42px; height: 42px; border-radius: 16px;
   background: var(--surface-strong); color: var(--text);
@@ -70,11 +71,13 @@ h1 { margin-bottom: 0; font-size: 28px; letter-spacing: -0.04em; }
 }
 .hero-card { display: flex; gap: 14px; padding: 16px; align-items: center; }
 .avatar {
-  flex: 0 0 70px; height: 70px; border-radius: 24px;
-  display: grid; place-items: center;
-  color: white; font-size: 30px; font-weight: 800;
-  background: linear-gradient(135deg, var(--brand), var(--lavender));
+  position: relative; flex: 0 0 76px; height: 76px; border-radius: 26px;
+  display: grid; place-items: center; overflow: hidden;
+  color: white; font-size: 30px; font-weight: 900;
+  background: radial-gradient(circle at 25% 20%, rgba(255,255,255,.55), transparent 24%), linear-gradient(135deg, var(--brand), var(--lavender));
 }
+.logo-heart { letter-spacing: -0.08em; transform: translateX(-2px); }
+.logo-spark { position: absolute; right: 13px; bottom: 10px; font-size: 17px; filter: drop-shadow(0 4px 8px rgba(43,31,45,.18)); }
 .hero-copy p { color: var(--muted); font-size: 13px; margin-bottom: 6px; }
 .hero-copy h2 { margin-bottom: 6px; font-size: 20px; }
 
@@ -103,6 +106,9 @@ h1 { margin-bottom: 0; font-size: 28px; letter-spacing: -0.04em; }
   border-radius: 16px; padding: 12px 14px; font-weight: 700;
 }
 .voice-button { background: #f2ecff; color: var(--lavender); }
+.voice-status { margin: -4px 0 0; color: var(--muted); font-size: 12px; }
+.voice-tools { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.message.ai::after { content: attr(data-emotion); display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
 .send-button, .primary-wide { color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-strong)); }
 .secondary-button { background: #fff; color: var(--brand-strong); border: 1px solid var(--line); }
 
