@@ -28,7 +28,7 @@
           </div>
         </section>
 
-        <nav class="quick-grid" aria-label="快捷状态">
+        <nav class="quick-grid quick-grid-four" aria-label="快捷状态">
           <button class="quick-card" data-action="toggleWake">
             <span>🎙️</span>
             <strong id="wakeStatus">唤醒关闭</strong>
@@ -44,6 +44,11 @@
             <strong id="careStatus">关怀普通</strong>
             <small>智能打扰判断</small>
           </button>
+          <button class="quick-card" data-action="toggleWeChat">
+            <span>💬</span>
+            <strong id="wechatStatus">微信未连</strong>
+            <small>微信聊天通道</small>
+          </button>
         </nav>
 
         <section class="chat-card" aria-label="对话区域">
@@ -52,6 +57,21 @@
             <button type="button" id="voiceButton" class="voice-button" aria-label="语音输入">按住说</button>
             <input id="messageInput" name="message" autocomplete="off" placeholder="和 Aini 说点什么…" />
             <button type="submit" class="send-button">发送</button>
+          </form>
+        </section>
+
+        <section class="wechat-card" aria-label="微信通道交互">
+          <div class="section-heading">
+            <div>
+              <h3>微信通道</h3>
+              <p id="wechatDecision">未连接时仅做本地模拟；连接后按蓝牙/场景决定文本或语音回复。</p>
+            </div>
+            <span id="wechatModeBadge">文本优先</span>
+          </div>
+          <div id="wechatList" class="wechat-list" aria-live="polite"></div>
+          <form id="wechatForm" class="wechat-composer">
+            <input id="wechatInput" autocomplete="off" placeholder="模拟微信里发来的消息…" />
+            <button type="submit" class="send-button">微信发送</button>
           </form>
         </section>
 
@@ -121,6 +141,7 @@
           <div class="voice-tools" aria-label="语音试听与打断">
             <button type="button" id="voicePreviewButton" class="secondary-button">试听情绪语音</button>
             <button type="button" id="stopVoiceButton" class="secondary-button">打断语音</button>
+            <button type="button" id="voicePackButton" class="secondary-button">生成音色包</button>
           </div>
           <p id="voiceStatus" class="voice-status">女声 · 台湾口音温暖 · 温柔活泼</p>
           <label>

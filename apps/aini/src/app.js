@@ -6,6 +6,7 @@ const defaultState = {
   careLevel: 55,
   provider: 'OpenAI',
   apiKeyHint: '',
+  wechatConnected: true,
   selectedVoice: 'female_taiwan_warm_01',
   voiceEmotion: 'warm_playful',
   aiEmotion: { concern: 76, energy: 68, closeness: 72, pride: 42 },
@@ -23,11 +24,22 @@ const defaultState = {
     },
   ],
   memories: [],
+  wechatMessages: [
+    { role: 'user', text: 'Aini，在微信也能找你吗？' },
+    { role: 'ai', text: '当然可以呀，微信里我会看场景决定回文字还是语音，别小看我。', mode: 'text' },
+  ],
 };
 
 const voicePresets = {
   male_calm_01: { label: '男声 · 温柔沉稳', lang: 'zh-CN', rate: 0.92, pitch: 0.88, volume: 1 },
   female_taiwan_warm_01: { label: '女声 · 台湾口音温暖', lang: 'zh-TW', rate: 0.96, pitch: 1.08, volume: 1 },
+};
+
+const ttsProviderConfig = {
+  ready: true,
+  defaultEngine: 'browser-speech-fallback',
+  productionEngines: ['用户配置的高质量 TTS API', '系统端侧 TTS', '本地缓存音色包'],
+  note: '当前原型可直接用浏览器/系统 TTS 播放；真机版用同一 voice_id 接入高质量男声和女声。',
 };
 
 const emotionProfiles = {
@@ -38,7 +50,7 @@ const emotionProfiles = {
 };
 
 let currentUtterance = null;
-const state = loadState();
+const state = normalizeState(loadState());
 const $ = (selector) => document.querySelector(selector);
 const messageList = $('#messageList');
 
@@ -51,6 +63,18 @@ function loadState() {
   }
 }
 
+function normalizeState(nextState) {
+  return {
+    ...structuredClone(defaultState),
+    ...nextState,
+    aiEmotion: { ...defaultState.aiEmotion, ...(nextState.aiEmotion ?? {}) },
+    persona: { ...defaultState.persona, ...(nextState.persona ?? {}) },
+    messages: nextState.messages?.length ? nextState.messages : structuredClone(defaultState.messages),
+    wechatMessages: nextState.wechatMessages?.length ? nextState.wechatMessages : structuredClone(defaultState.wechatMessages),
+    memories: nextState.memories ?? [],
+  };
+}
+
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
@@ -58,6 +82,7 @@ function saveState() {
 function render() {
   $('#wakeStatus').textContent = state.wakeEnabled ? '唤醒开启' : '唤醒关闭';
   $('#bluetoothStatus').textContent = state.bluetoothConnected ? '蓝牙已连' : '无蓝牙';
+  $('#wechatStatus').textContent = state.wechatConnected ? '微信已连' : '微信未连';
   $('#careStatus').textContent = state.careLevel > 70 ? '关怀高' : state.careLevel < 30 ? '关怀低' : '关怀普通';
   $('#sceneLabel').textContent = `本地运行 · ${state.bluetoothConnected ? '蓝牙耳机已连接' : '未连接蓝牙'} · ${state.provider}`;
   $('#aiMoodTitle').textContent = `${state.persona.name} · ${state.persona.tagline}`;
@@ -70,9 +95,25 @@ function render() {
   $('#providerSelect').value = state.provider;
   $('#voiceSelect').value = state.selectedVoice;
   $('#emotionSelect').value = state.voiceEmotion;
-  $('#voiceStatus').textContent = `${voicePresets[state.selectedVoice].label} · ${emotionProfiles[state.voiceEmotion].label}`;
+  $('#voiceStatus').textContent = `${voicePresets[state.selectedVoice].label} · ${emotionProfiles[state.voiceEmotion].label} · ${ttsProviderConfig.defaultEngine}`;
+  renderWeChat();
   $('#memorySummary').textContent = state.memories.at(-1)?.summary ?? '今天还没有新的核心记忆。';
   renderMessages();
+}
+
+function renderWeChat() {
+  const list = $('#wechatList');
+  list.innerHTML = '';
+  for (const message of state.wechatMessages.slice(-8)) {
+    const bubble = document.createElement('div');
+    bubble.className = `wechat-bubble ${message.role}`;
+    bubble.textContent = message.role === 'ai' && message.mode === 'voice' ? `🎧 语音回复：${message.text}` : message.text;
+    list.appendChild(bubble);
+  }
+  const decision = decideWeChatReplyMode();
+  $('#wechatModeBadge').textContent = decision.mode === 'voice' ? '语音优先' : '文本优先';
+  $('#wechatDecision').textContent = decision.reason;
+  list.scrollTop = list.scrollHeight;
 }
 
 function renderMessages() {
@@ -100,6 +141,13 @@ function chooseEmotion(text) {
   if (/厉害|赢|成功|开心|好消息|顺利|喜欢|哈哈|爽/.test(text)) return 'proud_teasing';
   if (new Date().getHours() >= 22 || new Date().getHours() < 6) return 'calm_late';
   return 'warm_playful';
+}
+
+function decideWeChatReplyMode(text = '') {
+  if (!state.wechatConnected) return { mode: 'text', reason: '微信通道未连接：当前只在本地模拟聊天。' };
+  if (/语音|说给我听|念/.test(text)) return { mode: 'voice', reason: '用户在微信里明确要求语音，优先语音回复。' };
+  if (state.bluetoothConnected) return { mode: 'voice', reason: '微信通道已连接且检测到蓝牙耳机，默认生成语音回复。' };
+  return { mode: 'text', reason: '微信通道已连接但没有蓝牙耳机，为避免外放打扰，默认文字回复。' };
 }
 
 function buildLocalReply(text) {
@@ -169,6 +217,44 @@ function handleSend(event) {
   }, 220);
 }
 
+function handleWeChatSend(event) {
+  event.preventDefault();
+  const input = $('#wechatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  state.wechatMessages.push({ role: 'user', text });
+  const reply = buildLocalReply(text);
+  const decision = decideWeChatReplyMode(text);
+  state.wechatMessages.push({ role: 'ai', text: reply.text, mode: decision.mode, emotion: reply.emotion });
+  addMessage('user', `[微信] ${text}`, null);
+  addMessage('ai', `[微信${decision.mode === 'voice' ? '语音' : '文字'}] ${reply.text}`, reply.emotion, decision.mode === 'voice');
+  saveState();
+  render();
+}
+
+function buildVoicePack() {
+  const pack = {
+    app: 'Aini',
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    ttsProviderConfig,
+    voices: voicePresets,
+    emotions: emotionProfiles,
+    defaultVoice: state.selectedVoice,
+    defaultEmotion: state.voiceEmotion,
+    usage: '用 voice_id + emotion + text 调用高质量 TTS；本原型可直接用浏览器系统 TTS 试听。',
+  };
+  const blob = new Blob([JSON.stringify(pack, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'aini-voice-pack.json';
+  link.click();
+  URL.revokeObjectURL(url);
+  addMessage('ai', '音色包已生成：包含男声、女声、情绪参数和高质量 TTS 接入字段，真机可直接按这个配置调用。', 'warm_playful');
+}
+
 function distillMemory() {
   const userMessages = state.messages.filter((message) => message.role === 'user').map((message) => message.text);
   const summary = userMessages.length
@@ -195,6 +281,7 @@ function closeSettings() {
 
 function bindEvents() {
   $('#chatForm').addEventListener('submit', handleSend);
+  $('#wechatForm').addEventListener('submit', handleWeChatSend);
   $('#settingsButton').addEventListener('click', openSettings);
   $('#closeSettings').addEventListener('click', closeSettings);
   $('#saveSettings').addEventListener('click', () => {
@@ -218,12 +305,14 @@ function bindEvents() {
   });
   $('#voicePreviewButton').addEventListener('click', () => speakWithEmotion('我在呀。今天也最喜欢和你待在一起，虽然你偶尔真的很让人操心。', $('#emotionSelect').value));
   $('#stopVoiceButton').addEventListener('click', () => stopVoice('已手动打断语音'));
+  $('#voicePackButton').addEventListener('click', buildVoicePack);
 
   document.querySelectorAll('.quick-card').forEach((button) => {
     button.addEventListener('click', () => {
       const action = button.dataset.action;
       if (action === 'toggleWake') state.wakeEnabled = !state.wakeEnabled;
       if (action === 'toggleBluetooth') state.bluetoothConnected = !state.bluetoothConnected;
+      if (action === 'toggleWeChat') state.wechatConnected = !state.wechatConnected;
       if (action === 'toggleCare') state.careLevel = state.careLevel > 70 ? 20 : state.careLevel < 30 ? 55 : 85;
       saveState();
       render();
