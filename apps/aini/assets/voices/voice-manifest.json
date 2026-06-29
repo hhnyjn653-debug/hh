@@ -1,0 +1,31 @@
+{
+  "app": "Aini",
+  "version": 1,
+  "defaultVoice": "female_taiwan_warm_01",
+  "voices": {
+    "female_taiwan_warm_01": {
+      "label": "女声 · 台湾口音温暖",
+      "language": "zh-TW",
+      "gender": "female",
+      "qualityTarget": "high",
+      "baseRate": 0.96,
+      "basePitch": 1.08,
+      "stylePrompt": "25 岁台湾口音女声，温柔、开朗、轻微小傲娇，像亲密陪伴者自然说话"
+    },
+    "male_calm_01": {
+      "label": "男声 · 温柔沉稳",
+      "language": "zh-CN",
+      "gender": "male",
+      "qualityTarget": "high",
+      "baseRate": 0.92,
+      "basePitch": 0.88,
+      "stylePrompt": "年轻男声，温柔沉稳、有安全感，适合低打扰陪伴"
+    }
+  },
+  "emotions": {
+    "warm_playful": { "label": "温柔活泼", "rateDelta": 0.03, "pitchDelta": 0.04, "intensity": 0.62 },
+    "concerned_soft": { "label": "心疼轻声", "rateDelta": -0.1, "pitchDelta": -0.04, "intensity": 0.72 },
+    "proud_teasing": { "label": "小傲娇毒舌", "rateDelta": 0.05, "pitchDelta": 0.02, "intensity": 0.58 },
+    "calm_late": { "label": "夜间低声", "rateDelta": -0.14, "pitchDelta": -0.07, "intensity": 0.48 }
+  }
+}

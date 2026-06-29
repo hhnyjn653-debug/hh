@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#ff7aa8" />
+    <meta name="description" content="Aini 本地 AI 虚拟陪伴 App" />
+    <title>Aini</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="app" class="app-shell" aria-label="Aini AI 虚拟陪伴 App">
+      <section class="phone-frame">
+        <header class="top-bar">
+          <div>
+            <p class="eyebrow">Aini · 本地陪伴</p>
+            <h1><span class="brand-mark-mini">Ai</span> 你好，我是 Aini</h1>
+          </div>
+          <button id="settingsButton" class="icon-button" aria-label="打开设置">⚙️</button>
+        </header>
+
+        <section class="hero-card" aria-label="当前陪伴状态">
+          <div class="avatar" aria-hidden="true"><span class="logo-heart">Ai</span><span class="logo-spark">♥</span></div>
+          <div class="hero-copy">
+            <p id="sceneLabel">在手机本地运行 · 未连接蓝牙</p>
+            <h2 id="aiMoodTitle">温柔在线，轻声陪你</h2>
+            <p id="aiMoodDetail">Aini 会根据你的情绪、场景和自己的情绪值，决定如何回复和是否主动关心。</p>
+          </div>
+        </section>
+
+        <nav class="quick-grid quick-grid-four" aria-label="快捷状态">
+          <button class="quick-card" data-action="toggleWake">
+            <span>🎙️</span>
+            <strong id="wakeStatus">唤醒关闭</strong>
+            <small>端侧低功耗</small>
+          </button>
+          <button class="quick-card" data-action="toggleBluetooth">
+            <span>🎧</span>
+            <strong id="bluetoothStatus">无蓝牙</strong>
+            <small>自动选择文本/语音</small>
+          </button>
+          <button class="quick-card" data-action="toggleCare">
+            <span>💗</span>
+            <strong id="careStatus">关怀普通</strong>
+            <small>智能打扰判断</small>
+          </button>
+          <button class="quick-card" data-action="toggleWeChat">
+            <span>💬</span>
+            <strong id="wechatStatus">微信未连</strong>
+            <small>微信聊天通道</small>
+          </button>
+        </nav>
+
+        <section class="chat-card" aria-label="对话区域">
+          <div id="messageList" class="message-list" aria-live="polite"></div>
+          <form id="chatForm" class="composer">
+            <button type="button" id="voiceButton" class="voice-button" aria-label="语音输入">按住说</button>
+            <input id="messageInput" name="message" autocomplete="off" placeholder="和 Aini 说点什么…" />
+            <button type="submit" class="send-button">发送</button>
+          </form>
+        </section>
+
+        <section class="wechat-card" aria-label="微信通道交互">
+          <div class="section-heading">
+            <div>
+              <h3>微信通道</h3>
+              <p id="wechatDecision">未连接时仅做本地模拟；连接后按蓝牙/场景决定文本或语音回复。</p>
+            </div>
+            <span id="wechatModeBadge">文本优先</span>
+          </div>
+          <div id="wechatList" class="wechat-list" aria-live="polite"></div>
+          <form id="wechatForm" class="wechat-composer">
+            <input id="wechatInput" autocomplete="off" placeholder="模拟微信里发来的消息…" />
+            <button type="submit" class="send-button">微信发送</button>
+          </form>
+        </section>
+
+        <section class="insight-grid" aria-label="本地智能面板">
+          <article class="panel">
+            <h3>AI 情绪值</h3>
+            <div class="meter"><span>关心</span><progress id="concernMeter" max="100" value="76"></progress></div>
+            <div class="meter"><span>活力</span><progress id="energyMeter" max="100" value="58"></progress></div>
+            <div class="meter"><span>亲密</span><progress id="closenessMeter" max="100" value="64"></progress></div>
+            <div class="meter"><span>傲娇</span><progress id="prideMeter" max="100" value="42"></progress></div>
+          </article>
+          <article class="panel">
+            <h3>本地记忆</h3>
+            <p id="memorySummary">今天还没有新的核心记忆。</p>
+            <button id="distillButton" class="secondary-button">蒸馏今日核心</button>
+          </article>
+        </section>
+
+        <section class="permission-strip" aria-label="权限入口">
+          <button data-permission="位置">📍 位置</button>
+          <button data-permission="摄像头">📷 摄像头</button>
+          <button data-permission="健康数据">⌚ 手表</button>
+          <button data-permission="文件">📁 文件</button>
+        </section>
+      </section>
+
+      <aside id="settingsDrawer" class="settings-drawer" aria-hidden="true">
+        <div class="drawer-card">
+          <div class="drawer-header">
+            <h2>Aini 设置</h2>
+            <button id="closeSettings" class="icon-button" aria-label="关闭设置">✕</button>
+          </div>
+          <label>
+            模型 API Provider
+            <select id="providerSelect">
+              <option>OpenAI</option>
+              <option>Anthropic</option>
+              <option>Google</option>
+              <option>国产大模型</option>
+              <option>本地模型</option>
+            </select>
+          </label>
+          <label>
+            本地 API Key（仅示意，不上传）
+            <input id="apiKeyInput" type="password" placeholder="保存在系统安全区" />
+          </label>
+          <label>
+            支持平台
+            <input value="Android / iOS / HarmonyOS" readonly />
+          </label>
+          <label>
+            TTS 音色
+            <select id="voiceSelect">
+              <option value="female_taiwan_warm_01">女声 · 台湾口音温暖</option>
+              <option value="male_calm_01">男声 · 温柔沉稳</option>
+            </select>
+          </label>
+          <label>
+            语音情绪
+            <select id="emotionSelect">
+              <option value="warm_playful">温柔活泼</option>
+              <option value="concerned_soft">心疼轻声</option>
+              <option value="proud_teasing">小傲娇毒舌</option>
+              <option value="calm_late">夜间低声</option>
+            </select>
+          </label>
+          <div class="voice-tools" aria-label="语音试听与打断">
+            <button type="button" id="voicePreviewButton" class="secondary-button">试听情绪语音</button>
+            <button type="button" id="stopVoiceButton" class="secondary-button">打断语音</button>
+            <button type="button" id="voicePackButton" class="secondary-button">生成音色包</button>
+          </div>
+          <p id="voiceStatus" class="voice-status">女声 · 台湾口音温暖 · 温柔活泼</p>
+          <label>
+            主动关怀强度
+            <input id="careRange" type="range" min="0" max="100" value="55" />
+          </label>
+          <button id="saveSettings" class="primary-wide">保存到本地</button>
+        </div>
+      </aside>
+    </main>
+    <script type="module" src="./src/app.js"></script>
+  </body>
+</html>
